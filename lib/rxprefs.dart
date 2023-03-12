@@ -53,6 +53,6 @@ class RxPref<T> {
       case double:
         return prefs.setDouble(key, value as double);
     }
-    throw Exception("Unknown setValue type $T");
+    throw Exception("Unknown setValue type $T for $key: $value");
   }
 }
