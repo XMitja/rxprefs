@@ -13,6 +13,10 @@ class MyPrefs {
   }
 
   static const timesPressed = RxPref("timesPressed", 0);
+  static const stringPref = RxPref("userName", "default");
+  static const listPref = RxPref("listPref", <String>[]);
+  static const doublePref = RxPref("doublePref", 0.0);
+  static const boolPref = RxPref("boolPref", false);
 }
 
 class MyApp extends StatelessWidget {
@@ -59,8 +63,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  void _incrementCounter() {
-    MyPrefs.timesPressed.setValue(MyPrefs.timesPressed.getValue() + 1);
+  void _incrementCounter() async {
+    await MyPrefs.timesPressed.setValue(MyPrefs.timesPressed.getValue() + 1);
+    MyPrefs.doublePref.setValue(MyPrefs.timesPressed.getValue().toDouble());
+    MyPrefs.stringPref.setValue(MyPrefs.timesPressed.getValue().toString());
+    MyPrefs.listPref.setValue([
+      MyPrefs.timesPressed.getValue().toString(),
+      ...MyPrefs.listPref.getValue(),
+    ].take(10).toList());
+    MyPrefs.boolPref.setValue(!MyPrefs.boolPref.getValue());
   }
 
   @override
@@ -103,9 +114,18 @@ class _MyHomePageState extends State<MyHomePage> {
             StreamBuilder<int>(
                 stream: MyPrefs.timesPressed.getValueStream(),
                 builder: (context, snapshot) {
-                  return Text(
-                    '${snapshot.data ?? -1}',
-                    style: Theme.of(context).textTheme.headline4,
+                  return Column(
+                    children: [
+                      Text(
+                        '${snapshot.data ?? -1}',
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                      // since we're building on the int, these can have value of one less, until next refresh
+                      Text(MyPrefs.stringPref.getValue()),
+                      Text(MyPrefs.boolPref.getValue().toString()),
+                      Text(MyPrefs.doublePref.getValue().toString()),
+                      Text(MyPrefs.listPref.getValue().toString()),
+                    ],
                   );
                 }),
           ],

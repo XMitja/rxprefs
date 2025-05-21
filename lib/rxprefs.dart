@@ -41,17 +41,20 @@ class RxPref<T> {
   Future<bool> setValue(T value) async {
     final prefs = await SharedPreferences.getInstance();
     _subjects[this]?.value = value;
-    switch (T) {
-      case int:
-        return prefs.setInt(key, value as int);
-      case List<String>:
-        return prefs.setStringList(key, value as List<String>);
-      case String:
-        return prefs.setString(key, value as String);
-      case bool:
-        return prefs.setBool(key, value as bool);
-      case double:
-        return prefs.setDouble(key, value as double);
+    if (value is int) {
+      return prefs.setInt(key, value);
+    }
+    if (value is String) {
+      return prefs.setString(key, value);
+    }
+    if (value is bool) {
+      return prefs.setBool(key, value);
+    }
+    if (value is double) {
+      return prefs.setDouble(key, value);
+    }
+    if (value is List<String>) {
+      return prefs.setStringList(key, value);
     }
     throw Exception("Unknown setValue type $T for $key: $value");
   }
